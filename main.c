@@ -1,27 +1,84 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
-struct student
+int is_whitespace(char c)
 {
-	int ID;
-	char name[15];
-	double grade;
-};
+	if (c == ' ' || 
+		c == '\n' ||
+		c == '\r' ||
+		c == '\t' ||
+		c == '(' 	
+		)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+int fget_word(FILE *fp, char *word)
+{
+	char c;
+	int cnt;
+	
+	while( (c=fgetc(fp)) != EOF )
+	{
+		if(is_whitespace(c) == 0)
+		{
+			break;
+		}
+	}
+	
+	if( c == EOF )
+	{
+		return 0; // it means fail
+	}
+	
+	cnt = 0;
+	word[cnt++] = c;
+	word[cnt] = '\0';
+	
+	while( (word[cnt] = fgetc(fp)) != EOF )
+	{
+		if(is_whitespace(word[cnt]) == 1)
+		{
+			word[cnt] = '\0';
+			break;
+		}
+		cnt++;
+	}	
+	
+	return cnt;
+	
+}
 
 int main(void) {
 	
-	struct student s = {21, "SuYoungKang", 4.3};
+	FILE *fp;
+	char filepath[100];
+	char word[100];
 	
-	s.ID = 123;
-	strcpy(s.name, "Suyoung");
-	s.grade = 4.3;
+	//file open
+	printf("Input the file path: ");
+	scanf("%s", filepath); // filepath is pointer
+	fp = fopen(filepath, "r"); // pointer
 	
-	printf("ID: %d\n", s.ID);
-	printf("name: %s\n", s.name);
-	printf("grade: %f\n", s.grade);
+	if(fp == NULL)
+	{
+		printf("file path is wrong! %s\n", filepath);
+		return -1;
+	}
+	
+
+	//word reading & analysis
+	while(fget_word(fp, word) != 0) // just for checking
+	{
+		printf("%s\n", word);
+	}
 	
 	
+	// output
+	fclose(fp);
+
 	return 0;
 }
